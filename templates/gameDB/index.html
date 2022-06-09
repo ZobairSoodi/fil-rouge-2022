@@ -1,0 +1,402 @@
+{% extends 'gameDB/base.html' %}
+{% block links %}
+    {% load static %}
+    <link rel="preload" as="advpix" href="{% static 'gameDB/public/fonts/advanced-pixel-lcd-7-font/AdvancedPixelLcd7-yGOq.ttf' %}"
+        type="font/ttf" />
+    <style>
+        @font-face {
+            font-family: advpix;
+            src: url('{% static 'gameDB/public/fonts/advanced-pixel-lcd-7-font/AdvancedPixelLcd7-yGOq.ttf' %}');
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser-arcade-physics.min.js"></script>
+{% endblock links %}
+
+{% block title %}BugSweeper{% endblock title %}
+
+{% block main %}
+    <script>
+        var list = [];
+        var cellsCount;
+        var lost = false;
+        var total_bombs = 0;
+        var rows;
+        var cols;
+        var reveal_count = 0;
+        var score_text;
+        var score = 0;
+        var timer_text;
+        var timer = 0;
+        var timerEvent;
+        var formData;
+        var submit_score;
+        var difficulty;
+
+        var mainGameScene = new Phaser.Class({
+            Extends: Phaser.Scene,
+            initialize:
+                function mainGameScene() {
+                    Phaser.Scene.call(this, { 'key': 'mainGameScene' })
+                },
+            preload: function () {
+                list = [];
+                cellsCount;
+                score = 0;
+                lost = false;
+                reveal_count = 0;
+                timer = 0
+
+                this.load.image('brick', '{% static 'gameDB/public/assets/brick.svg' %}');
+                for (var i = 0; i < 9; i++) {
+                    this.load.image('brick' + i, '{% static 'gameDB/public/assets/brick'%}' + i + '.svg');
+                }
+                this.load.image('flag', '{% static 'gameDB/public/assets/flag.svg' %}');
+                this.load.image('head', '{% static 'gameDB/public/assets/head.png' %}');
+                this.load.image('reset', '{% static 'gameDB/public/assets/reset_btn.png' %}');
+                this.load.image('reset_clicked', '{% static 'gameDB/public/assets/reset_clicked.png' %}');
+                this.load.image('back_to_main', '{% static 'gameDB/public/assets/main_menu.png' %}');
+                this.load.image('won', '{% static 'gameDB/public/assets/won.png' %}');
+                this.load.image('submit_btn', '{% static 'gameDB/public/assets/submit_btn.png' %}');
+            },
+            create: function () {
+                this.add.image(400, 300, 'bg');
+                this.add.image(0, 0, 'head').setOrigin(0, 0);
+
+                // Add reset button and its functionalities
+                var reset_btn = this.add.image(300, 50, 'reset');
+                reset_btn.setInteractive();
+                reset_btn.on('pointerdown', function () {
+                    this.setTexture('reset_clicked');
+                })
+                reset_btn.on('pointerup', function () {
+                    reset_btn.setTexture('reset');
+                    this.scene.start('mainMenuScene');
+                }, this)
+                reset_btn.on('pointerout', function () {
+                    this.setTexture('reset');
+                })
+
+
+                // Add score and timer
+                score_text = this.add.text(114, 38, '000', { fontFamily: 'advpix', color: 'red' });
+                timer_text = this.add.text(432, 38, '000', { fontFamily: 'advpix', color: 'red' });
+
+                // update timer
+                timerEvent = this.time.addEvent({ delay: 1000, callback: updateTimer, callbackScope: this,paused: true, loop: true });
+
+
+
+                // Fill the board with bricks and then
+                // generate the bombs (easy difficulty)
+                if(difficulty == 'easy'){
+                    rows = cols = 6;
+                    generate_bricks(this, 100, rows, cols, 1, 1);
+                    generate_bombs(5, 50);
+                }
+
+
+                // Fill the board with bricks and then
+                // generate the bombs (normal difficulty)
+                if(difficulty == 'normal'){
+                    rows = cols = 12;
+                    generate_bricks(this, 50, rows, cols, 0.5, 2);
+                    generate_bombs(30, 100);
+                }
+
+
+                // Fill the board with bricks and then
+                // generate the bombs (hard difficulty)
+                if(difficulty == 'hard'){
+                    rows = cols = 24;
+                    generate_bricks(this, 25, rows, cols, 0.25, 4);
+                    generate_bombs(60, 200);
+                }
+
+
+
+                // Generate bombs within bricks
+
+
+                // Disable the default behavior of right-click
+                this.input.mouse.disableContextMenu();
+
+                list.forEach(el => {
+                    // Set the bomb count for every block
+                    set_bomb_count(el);
+                    el.on('pointerdown', function (pointer) {
+                        if(timerEvent.paused){
+                            timerEvent.paused = false;
+                        }
+                        if (pointer.rightButtonDown()) {
+                            if (!this.isFlagged && !this.isRevealed) {
+                                this.setTexture('flag')
+                                this.isFlagged = true;
+                            }
+                            else if (this.isFlagged && !this.isRevealed) {
+                                this.setTexture('brick');
+                                this.isFlagged = false;
+                            }
+                        }
+                        else {
+                            if (!this.isRevealed) {
+                                this.isRevealed = true;
+                                reveal_count++;
+                            }
+                            if (this.hasBomb === true) {
+                                this.setTexture('bomb');
+                                lost = true;
+                                return;
+                            }
+                            detect_bombs(el);
+                            if(score < 10){
+                                score_text.setText('00' + score);
+                            }
+                            else if(score < 100){
+                                score_text.setText('0' + score);
+                            }
+                            else{
+                                score_text.setText(score);
+                            }
+                        }
+
+                    });
+                });
+
+                submit_score = this.add.image(300, 900, 'submit_btn');
+                submit_score.setInteractive();
+                submit_score.on('pointerdown', function () {
+                    const data = new FormData();
+                    data.append('score', score);
+                    data.append('duration', timer);
+                    data.append('won', + lost?"False":"True");
+                    data.append('difficulty', difficulty);
+                    data.append('profile', '{{ request.user.id}}');
+                    data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                    fetch('{% url 'store-data' %}',
+                        {
+                            method: 'POST',
+                            body: data
+                        }
+                    ).then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        formData = data
+                    }).catch(error => {
+                        console.error(error)
+                    })
+                    }, this);
+
+            },
+            update: function () {
+
+                (function (){
+                    const canvas = document.getElementsByTagName("canvas")[0];
+                    canvas.style.height = '100%'
+                })();
+
+
+                // Lose
+                if (lost) {
+                    reveal_bombs();
+                    lost = false;
+                    var try_again = this.add.image(300, 350, 'try_again');
+                    try_again.setInteractive();
+                    try_again.on('pointerdown', function () {
+                        this.scene.restart()
+                    }, this);
+                    submit_score.y -= 300;
+                }
+                // Win
+                else if (reveal_count == (rows * cols) - total_bombs) {
+                    console.log("won");
+                    var back_to_main = this.add.image(300, 350, 'back_to_main');
+                    back_to_main.setInteractive();
+                    back_to_main.on('pointerdown', function () {
+                        this.scene.start('mainMenuScene');
+                    }, this)
+                    this.add.image(300, 200, 'won');
+                    reveal_bombs();
+                    reveal_count = 0;
+                    submit_score.y -= 300;
+                }
+            }
+        });
+
+        // Menu Scene
+
+        var mainMenuScene = new Phaser.Class({
+            Extends: Phaser.Scene,
+            initialize:
+                function () {
+                    Phaser.Scene.call(this, { 'key': 'mainMenuScene' });
+                },
+            preload: function () {
+                //this.load.image('start_game', '{% static 'gameDB/public/assets/start_game.png' %}');
+                this.load.image('bg', '{% static 'gameDB/public/assets/bg.jpg' %}');
+                this.load.image('bomb', '{% static 'gameDB/public/assets/bomb.svg' %}');
+                this.load.image('try_again', '{% static 'gameDB/public/assets/try_again.png' %}');
+                this.load.image('diff_easy', '{% static 'gameDB/public/assets/diff_easy.png' %}');
+                this.load.image('diff_normal', '{% static 'gameDB/public/assets/diff_normal.png' %}');
+                this.load.image('diff_hard', '{% static 'gameDB/public/assets/diff_hard.png' %}');
+            },
+            create: function () {
+                this.add.image(300, 350, 'bg');
+                //var start_button = this.add.image(300, 350, 'start_game');
+
+                var diff_easy = this.add.image(300, 200, 'diff_easy');
+                choose_diff(diff_easy, 'easy', this);
+
+                var diff_normal = this.add.image(300, 350, 'diff_normal');
+                choose_diff(diff_normal, 'normal', this);
+
+                var diff_hard = this.add.image(300, 500, 'diff_hard');
+                choose_diff(diff_hard, 'hard', this);
+
+            },
+            update: function () {
+                (function (){
+                    const canvas = document.getElementsByTagName("canvas")[0];
+                    canvas.style.height = '100%'
+                })();
+            }
+        })
+        var main = document.getElementById("main");
+        var config = {
+            type: Phaser.AUTO,
+            width: 600,
+            height: 700,
+            parent: 'main',
+            scene: [mainMenuScene, mainGameScene]
+        };
+
+        var game = new Phaser.Game(config);
+
+        function choose_diff(btn, diff, s){
+            btn.setInteractive();
+            btn.on('pointerdown', function () {
+                difficulty = diff;
+                s.scene.start('mainGameScene');
+            },s)
+        }
+
+
+        function generate_bricks(brick, n, rows, cols,scale,from_top) {
+            cellsCount = rows * cols;
+            for (var i = 1; i <= rows; i++) {
+                for (var j = 1; j <= cols; j++) {
+                    var l = brick.add.image((n * (j)) - n, ((i + from_top) * n) - n, 'brick').setOrigin(0, 0);
+                    l.setScale(scale);
+                    l.row = i;
+                    l.col = j;
+                    l.hasBomb = false;
+                    l.isFlagged = false;
+                    l.isRevealed = false;
+                    l.setInteractive();
+                    list.push(l);
+                }
+            }
+        }
+
+        function generate_bombs(maxBombs, tries) {
+            var bombCount = 0;
+            var max_loops = 0;
+            while (bombCount < maxBombs && max_loops < tries) {
+                for (var i = 0; i < list.length; i++) {
+                    var rand = Math.floor(Math.random() * cellsCount);
+                    if (rand == 1 && list[i].hasBomb == false) {
+                        list[i].hasBomb = true;
+                        // list[i].setTint(0xff0000);
+                        bombCount++;
+                        if (bombCount >= maxBombs) {
+                            break;
+                        }
+                    }
+                }
+                max_loops++;
+            }
+            total_bombs = bombCount;
+        }
+
+        function set_bomb_count(block) {
+            var r = block.row;
+            var c = block.col;
+            var temp_list = surrounding_blocks(r, c);
+            var bombs = 0;
+            temp_list.forEach(function (el) {
+                if (temp_obj = Phaser.Actions.GetFirst(list, { row: el[0], col: el[1] })) {
+                    if (temp_obj.hasBomb == true) {
+                        bombs++;
+                    }
+                }
+            });
+            block.bombCount = bombs;
+        }
+
+        function detect_bombs(block) {
+            var r = block.row;
+            var c = block.col;
+            var temp_list = surrounding_blocks(r, c);
+            block.setTexture('brick' + block.bombCount);
+            if(block.isRevealed){
+                score += block.bombCount;
+            }
+            if (block.bombCount == 0) {
+                temp_list.forEach(function (el) {
+                    if (temp_obj = Phaser.Actions.GetFirst(list, { row: el[0], col: el[1], bombCount: 0 })) {
+                        temp_obj.setTexture('brick0');
+                        if (!temp_obj.isRevealed) {
+                            reveal_count++;
+                            temp_obj.isRevealed = true;
+                        }
+
+                        temp_obj.clearTint();
+                    }
+                });
+            }
+        }
+
+        function surrounding_blocks(r, c) {
+            return [
+                [r - 1, c - 1],
+                [r - 1, c],
+                [r - 1, c + 1],
+                [r, c - 1],
+                [r, c + 1],
+                [r + 1, c - 1],
+                [r + 1, c],
+                [r + 1, c + 1]
+            ];
+        }
+
+        function reveal_bombs() {
+            list.forEach(el => {
+                if (el.hasBomb) {
+                    el.clearTint();
+                    el.setTexture('bomb');
+                }
+                el.off('pointerdown');
+            });
+        }
+
+        function updateTimer() {
+            timer++;
+            if (timer < 10) {
+                timer_text.setText('00' + timer);
+                timer_text.setPosition(432, 38);
+            }
+            else if (timer < 100) {
+                timer_text.setText('0' + timer);
+                timer_text.setPosition(432, 38);
+            }
+            else if(timer <= 999){
+                timer_text.setText(timer);
+                timer_text.setPosition(432, 38);
+            }
+            else if(timer > 999){
+                timer_text.setText(timer);
+                timer_text.setPosition(420, 38);
+            }
+        }
+    </script>
+
+{% endblock main %}

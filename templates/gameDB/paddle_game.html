@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+    <script>
+        var paddle;
+        var ball;
+        var cursors;
+        var line_bottom;
+        var line_top;
+        var line_left;
+        var line_right;
+        var bricks;
+
+        var mainGame = new Phaser.Class({
+            Extends: Phaser.Scene,
+            initialize:
+                function () {
+                    Phaser.Scene.call(this, { 'key': 'mainGame' });
+                },
+            preload: function () {
+                this.load.image('paddle', '{% static 'gameDB\paddle_game_assets/paddle.png' %}');
+                this.load.image('ball', '{% static 'gameDB\paddle_game_assets/ball.png' %}');
+                this.load.image('horizontal_line', '{% static 'gameDB\paddle_game_assets/horizontal_line.png' %}');
+                this.load.image('vertical_line', '{% static 'gameDB\paddle_game_assets/vertical_line.png' %}');
+                this.load.image('brick', '{% static 'gameDB\paddle_game_assets/brick.png' %}');
+            },
+            create: function () {
+                line_bottom = this.physics.add.image(1, 699, 'horizontal_line').setOrigin(0, 0);
+                line_bottom.setInteractive();
+                line_bottom.setImmovable(true);
+
+                line_top = this.physics.add.image(1, 1, 'horizontal_line').setOrigin(0, 0);
+                line_top.setInteractive();
+                line_top.setImmovable(true);
+
+                line_left = this.physics.add.image(1199, 1, 'vertical_line').setOrigin(0, 0);
+                line_left.setInteractive();
+                line_left.setImmovable(true);
+
+                line_right = this.physics.add.image(1, 1, 'vertical_line').setOrigin(0, 0);
+                line_right.setInteractive();
+                line_right.setImmovable(true);
+
+                group_x = this.physics.add.staticGroup({
+                    key: 'horizontal_line',
+                    frameQuantity: 30
+                });
+                group_x.refresh();
+
+                cursors = this.input.keyboard.createCursorKeys();
+
+                paddle = this.physics.add.image(600, 685, 'paddle');
+                paddle.setInteractive();
+                paddle.setImmovable(true);
+
+                bricks = this.physics.add.group({ key: 'brick', frame: 0, repeat: 53, immovable: true });
+                Phaser.Actions.GridAlign(
+                    bricks.getChildren(),
+                    { width: 9, cellWidth: 120, cellHeight: 70, x: 132, y: 148 }
+                );
+                /*bricks.getChildren().forEach(el => {
+                    el.setImmovable();
+
+                });*/
+
+
+
+
+
+                ball = this.physics.add.image(600, 500, 'ball');
+                ball.setInteractive();
+                ball.setVelocity(200, 200).setBounce(1, 1);
+
+            },
+            update: function () {
+                this.physics.world.collide(ball, line_bottom);
+                this.physics.world.collide(ball, line_top);
+                this.physics.world.collide(ball, line_left);
+                this.physics.world.collide(ball, line_right);
+                this.physics.world.collide(ball, paddle);
+                this.physics.world.collide(ball, bricks);
+
+                if(cursors.left.isDown){
+                    paddle.x -= 7;
+                }
+                if(cursors.right.isDown){
+                    paddle.x += 7;
+                }
+            }
+        })
+
+        var config = {
+            type: Phaser.AUTO,
+            width: 1200,
+            height: 700,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    debug: false
+                }
+            },
+            scene: [mainGame]
+        };
+
+        var game = new Phaser.Game(config);
+
+    </script>
+</body>
+</html>

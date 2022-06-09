@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'gameDB/styles/base.css' %}">
+    <script src="https://kit.fontawesome.com/ab021e0629.js" crossorigin="anonymous"></script>
+    {% block links %}{% endblock links %}
+    <title>{% block title %}{% endblock title %}</title>
+    <style>
+        @font-face {
+          font-family: "nasa";
+          src: url('{% static 'gameDB/fonts/nasalization-free/nasalization-rg.otf' %}');
+        }
+    </style>
+</head>
+<body>
+    <nav style="font-family: nasa;">
+        <div id="top_nav">
+            <div>
+                <a class="active_link" href="#"><i class="fa-solid fa-house-chimney"></i>HOME</a>
+            </div>
+            <div>
+                <a href="#"><i class="fa-solid fa-circle-question"></i>HOW TO PLAY</a>
+            </div>
+            <div>
+                <a href="#"><i class="fa-solid fa-ranking-star"></i>HIGH SCORE</a>
+            </div>
+            <div>
+                <a href="#"><i class="fa-solid fa-play"></i>PLAY NOW</a>
+            </div>
+        </div>
+
+        <div id="bottom_nav">
+            {% if user.is_uthanticated %}
+                <div>
+                    LOG IN
+                </div>
+                <div>
+                    SIGN UP
+                </div>
+            {% else %}
+                <div>
+                    <a href="#"><i class="fa-solid fa-user"></i>PROFILE</a>
+                </div>
+                <div>
+                    <a href="#"><i class="fa-solid fa-right-from-bracket"></i>LOG OUT</a>
+                </div>
+            {% endif %}
+        </div>
+    </nav>
+    <div id="main" style="background-image: url({% static 'gameDB/images/bg.svg' %}) !important;background-size: contain !important;">
+        {% block main %}{% endblock main %}
+    </div>
+</body>
+</html>
