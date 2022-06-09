@@ -1,0 +1,24 @@
+{% extends 'gameDB/base.html' %}
+
+{% block links %}
+
+{% endblock links %}
+
+{% block title %}
+    Sign Up
+{% endblock title %}
+
+{% block main %}
+    <form method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}
+            <small>{{ field.help_text }}</small>
+        {% endif %}
+    {% endfor %}
+    <input type="submit">
+
+    </form>
+{% endblock main %}

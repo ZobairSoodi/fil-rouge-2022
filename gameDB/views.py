@@ -1,11 +1,9 @@
-import json
-
 from .models import Profile, Game, Difficulty
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.conf import settings
-from django.templatetags.static import static
+from .forms import SignUpForm
 
 # Create your views here.
 
@@ -48,3 +46,14 @@ def base(request):
 
 def paddle(request):
     return render(request, template_name='gameDB/paddle_game.html')
+
+
+def sign_up(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('game')
+    else:
+        form = SignUpForm()
+    return render(request, 'gameDB/sign_up.html', {'form': form})

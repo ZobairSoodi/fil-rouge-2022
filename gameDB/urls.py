@@ -7,4 +7,5 @@ urlpatterns = [
     path('storeData/', views.store_data, name='store-data'),
     path('base/', views.base, name='base'),
     path('paddle/', views.paddle, name='paddle-game'),
+    path('signup/', views.sign_up, name='sign-up'),
 ]
