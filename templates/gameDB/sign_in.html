@@ -1,0 +1,25 @@
+{% extends 'gameDB/base.html' %}
+{% load static %}
+
+{% block links %}
+    <link rel="stylesheet" href="{% static 'gameDB/styles/signup/signup.css' %}">
+{% endblock links %}
+
+{% block title %}
+    Sign Up
+{% endblock title %}
+
+{% block main %}
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label>Email:</label>
+            <input type="text" name="username">
+        </div>
+        <div>
+            <label>Password:</label>
+            <input type="password" name="password">
+        </div>
+        <input type="submit" value="Login">
+    </form>
+{% endblock main %}

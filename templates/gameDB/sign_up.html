@@ -1,7 +1,8 @@
 {% extends 'gameDB/base.html' %}
+{% load static %}
 
 {% block links %}
-
+    <link rel="stylesheet" href="{% static 'gameDB/styles/signup/signup.css' %}">
 {% endblock links %}
 
 {% block title %}
@@ -12,11 +13,15 @@
     <form method="POST">
     {% csrf_token %}
     {% for field in form %}
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.help_text %}
-            <small>{{ field.help_text }}</small>
-        {% endif %}
+        <div>
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
     {% endfor %}
     <input type="submit">
 

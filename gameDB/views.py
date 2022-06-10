@@ -1,23 +1,28 @@
 from .models import Profile, Game, Difficulty
-from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.conf import settings
 from .forms import SignUpForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 
+# Test view
 def home_page(request):
     test = Profile.objects.get(profile_pic='images/default_profile_pic.png')
     media_url = settings.MEDIA_URL
     return HttpResponse("<img src='" + media_url + str(test.profile_pic) + "' />")
 
 
+# Main game view
+@login_required
 def game_page(request):
     return render(request, template_name='gameDB/index.html')
 
 
+# Submit score view
 def store_data(request):
     if request.method == 'POST':
         score = request.POST.get('score')
@@ -40,20 +45,42 @@ def store_data(request):
     return redirect('game')
 
 
+# Base template view
 def base(request):
     return render(request, template_name='gameDB/base.html')
 
 
+# Paddle game view
 def paddle(request):
     return render(request, template_name='gameDB/paddle_game.html')
 
 
+# Sign Up view
 def sign_up(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-        return redirect('game')
+            return redirect('sign-in')
     else:
         form = SignUpForm()
     return render(request, 'gameDB/sign_up.html', {'form': form})
+
+
+# Sign In view
+def sign_in(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            login(request, user)
+            return redirect('game')
+    return render(request, 'gameDB/sign_in.html')
+
+
+# Log out view
+@login_required
+def log_out(request):
+    logout(request)
+    return redirect('sign-in')

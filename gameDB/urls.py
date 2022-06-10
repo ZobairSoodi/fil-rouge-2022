@@ -1,5 +1,6 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+
 
 urlpatterns = [
     path('home/', views.home_page, name='home'),
@@ -8,4 +9,6 @@ urlpatterns = [
     path('base/', views.base, name='base'),
     path('paddle/', views.paddle, name='paddle-game'),
     path('signup/', views.sign_up, name='sign-up'),
+    path('signin/', views.sign_in, name='sign-in'),
+    path('logout/', views.log_out, name='log-out'),
 ]

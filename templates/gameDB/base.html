@@ -32,24 +32,24 @@
         </div>
 
         <div id="bottom_nav">
-            {% if user.is_uthanticated %}
-                <div>
-                    LOG IN
-                </div>
-                <div>
-                    SIGN UP
-                </div>
-            {% else %}
+            {% if user.is_authenticated %}
                 <div>
                     <a href="#"><i class="fa-solid fa-user"></i>PROFILE</a>
                 </div>
                 <div>
-                    <a href="#"><i class="fa-solid fa-right-from-bracket"></i>LOG OUT</a>
+                    <a href="{% url 'log-out' %}"><i class="fa-solid fa-right-from-bracket"></i>LOG OUT</a>
+                </div>
+            {% else %}
+                <div>
+                    <a href="{% url 'sign-in' %}"><i class="fa-solid fa-right-to-bracket"></i>LOG IN</a>
+                </div>
+                <div>
+                    <a href="{% url 'sign-up' %}"><i class="fa-solid fa-user-plus"></i>SIGN UP</a>
                 </div>
             {% endif %}
         </div>
     </nav>
-    <div id="main" style="background-image: url({% static 'gameDB/images/bg.svg' %}) !important;background-size: contain !important;">
+    <div id="main" style="background-image: url({% static 'gameDB/images/bg1.svg' %}) !important;background-size: contain !important;">
         {% block main %}{% endblock main %}
     </div>
 </body>
