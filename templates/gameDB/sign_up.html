@@ -23,7 +23,8 @@
             {% endif %}
         </div>
     {% endfor %}
-    <input type="submit">
+    <input type="submit" value="Sign Up">
+    <small>Already have an account ? <a href="{% url 'sign-in' %}">Sign In</a></small>
 
     </form>
 {% endblock main %}

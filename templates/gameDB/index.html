@@ -109,7 +109,7 @@
                 if(difficulty == 'hard'){
                     rows = cols = 24;
                     generate_bricks(this, 25, rows, cols, 0.25, 4);
-                    generate_bombs(60, 200);
+                    generate_bombs(100, 200);
                 }
 
 
@@ -129,7 +129,7 @@
                         }
                         if (pointer.rightButtonDown()) {
                             if (!this.isFlagged && !this.isRevealed) {
-                                this.setTexture('flag')
+                                this.setTexture('flag');
                                 this.isFlagged = true;
                             }
                             else if (this.isFlagged && !this.isRevealed) {
@@ -157,6 +157,7 @@
                             else{
                                 score_text.setText(score);
                             }
+
                         }
 
                     });
@@ -189,11 +190,10 @@
             },
             update: function () {
 
-                (function (){
+                {% comment %}(function (){
                     const canvas = document.getElementsByTagName("canvas")[0];
                     canvas.style.height = '100%'
-                })();
-
+                })();{% endcomment %}
 
                 // Lose
                 if (lost) {
@@ -206,6 +206,7 @@
                     }, this);
                     submit_score.y -= 300;
                 }
+
                 // Win
                 else if (reveal_count == (rows * cols) - total_bombs) {
                     console.log("won");
@@ -219,6 +220,20 @@
                     reveal_count = 0;
                     submit_score.y -= 300;
                 }
+
+                // Expand around blocks that have 0 bombCount
+                list.forEach((el) => {
+                    if(!el.isExpanded && el.bombCount == 0 && el.isRevealed){
+                        var temp_list = surrounding_blocks(el.row, el.col);
+                        temp_list.forEach((b)=>{
+                            if (temp_obj = Phaser.Actions.GetFirst(list, { row: b[0], col: b[1]})){
+                                temp_obj.isRevealed = true;
+                                temp_obj.setTexture('brick' + temp_obj.bombCount);
+                            }
+                        })
+                        el.isExpanded = true;
+                    }
+                })
             }
         });
 
@@ -254,10 +269,10 @@
 
             },
             update: function () {
-                (function (){
+                {% comment %}(function (){
                     const canvas = document.getElementsByTagName("canvas")[0];
                     canvas.style.height = '100%'
-                })();
+                })();{% endcomment %}
             }
         })
         var main = document.getElementById("main");
@@ -291,6 +306,7 @@
                     l.hasBomb = false;
                     l.isFlagged = false;
                     l.isRevealed = false;
+                    l.isExpanded = false;
                     l.setInteractive();
                     list.push(l);
                 }
@@ -348,7 +364,6 @@
                             reveal_count++;
                             temp_obj.isRevealed = true;
                         }
-
                         temp_obj.clearTint();
                     }
                 });

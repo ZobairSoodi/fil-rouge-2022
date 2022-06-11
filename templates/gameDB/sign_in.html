@@ -20,6 +20,9 @@
             <label>Password:</label>
             <input type="password" name="password">
         </div>
-        <input type="submit" value="Login">
+        <div>
+            <input type="submit" value="Login">
+            <small>Need an account ? <a href="{% url 'sign-up' %}">Sign Up</a></small>
+        </div>
     </form>
 {% endblock main %}
