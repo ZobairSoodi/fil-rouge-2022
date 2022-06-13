@@ -1,0 +1,27 @@
+{% extends 'gameDB/base.html' %}
+{% load static %}
+{% block links %}
+    <link rel="stylesheet" href="{% static 'gameDB/styles/home/home.css' %}">
+{% endblock %}
+{% block title %}Home Page{% endblock %}
+
+
+{% block main %}
+    <div id="home_main">
+        <div>
+            <h1 style="font-family: 'nasa' ">Bugsweeper</h1>
+            <p>
+                Lorem ipsum Lorem ipsum Lorem ipsum
+                Lorem ipsum Lorem ipsum Lorem ipsum
+                Lorem ipsum Lorem ipsum Lorem ipsum
+                Lorem ipsum Lorem ipsum Lorem ipsum
+                Lorem ipsum Lorem ipsum Lorem ipsum
+                Lorem ipsum Lorem ipsum Lorem ipsum
+            </p>
+            <a style="font-family: 'nasa' " href="{% url 'game' %}">Play Now</a>
+        </div>
+        <div>
+            <img src="{% static 'gameDB/images/home_bg.png' %}">
+        </div>
+    </div>
+{% endblock %}

@@ -11,6 +11,7 @@
 
 {% block main %}
     <form method="POST">
+    <h1 style="font-family: 'nasa';">Login</h1>
         {% csrf_token %}
         <div>
             <label>Email:</label>
@@ -20,9 +21,9 @@
             <label>Password:</label>
             <input type="password" name="password">
         </div>
-        <div>
-            <input type="submit" value="Login">
+        <div id="signup_div">
             <small>Need an account ? <a href="{% url 'sign-up' %}">Sign Up</a></small>
+            <input type="submit" value="Login">
         </div>
     </form>
 {% endblock main %}

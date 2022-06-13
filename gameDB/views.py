@@ -11,9 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 # Test view
 def home_page(request):
-    test = Profile.objects.get(profile_pic='images/default_profile_pic.png')
-    media_url = settings.MEDIA_URL
-    return HttpResponse("<img src='" + media_url + str(test.profile_pic) + "' />")
+    return render(request, 'gameDB/home.html')
 
 
 # Main game view

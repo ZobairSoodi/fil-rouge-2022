@@ -1,28 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;1,100;1,300&display=swap');
+
 form{
   width: 600px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  background-color: #42505F;
+  padding: 50px 40px 30px 40px;
 
   & > div{
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
     width: 100%;
-    margin-top: 20px;
+    margin-bottom: 40px;
 
     label{
       display: inline-block;
       width: 30%;
+      color: white;
+      font-family: 'work sans';
+      font-size: 20px;
     }
 
     input{
       width: 60%;
-      height: 35px;
+      height: 40px;
+      font-size: 18px;
+      padding: 7px;
     }
+
 
     p{
       color: red;
     }
+  }
+  small{
+    color: white;
+    font-family: 'work sans';
+  }
+  a{
+    color: white;
+  }
+
+  h1{
+    color: white;
+    text-align: center;
+    width: 100%;
+    margin: 0 0 40px 0;
+  }
+}
+#signup_div{
+  flex-wrap: nowrap;
+  justify-content: space-around;
+
+  input{
+    width: auto;
+    height: auto;
+    font-size: 20px;
+    padding: 10px 20px;
+    background-color: white;
+    color: #42505F;
+    border: none;
+    cursor: pointer;
   }
 }

@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;1,100;1,300&display=swap');
+
+$bg_color_main : #42505F;
+$bg_color_hover: #FFFFFF;
+$color_hover: #42505F;
+
+#home_main{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+
+  h1{
+    color: $bg_color_main;
+    font-size: 35px;
+  }
+  p{
+    width: 80%;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    font-family: 'Work Sans', sans-serif;
+  }
+  a{
+    text-decoration: none;
+    padding: 10px 20px;
+    background-color: $bg_color_main;
+    color: white;
+    font-size: 23px;
+  }
+}
