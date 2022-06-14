@@ -12,19 +12,20 @@ $color_hover: #42505F;
 
   h1{
     color: $bg_color_main;
-    font-size: 35px;
+    font-size: 50px;
   }
   p{
-    width: 80%;
+    width: 90%;
     margin-top: 40px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     font-family: 'Work Sans', sans-serif;
+    font-size: 22px;
   }
   a{
     text-decoration: none;
     padding: 10px 20px;
-    background-color: $bg_color_main;
+    background-color: #3792CB;
     color: white;
-    font-size: 23px;
+    font-size: 27px;
   }
 }

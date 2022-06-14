@@ -7,20 +7,21 @@
 }
 #home_main h1 {
   color: #42505F;
-  font-size: 35px;
+  font-size: 50px;
 }
 #home_main p {
-  width: 80%;
+  width: 90%;
   margin-top: 40px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   font-family: "Work Sans", sans-serif;
+  font-size: 22px;
 }
 #home_main a {
   text-decoration: none;
   padding: 10px 20px;
-  background-color: #42505F;
+  background-color: #3792CB;
   color: white;
-  font-size: 23px;
+  font-size: 27px;
 }
 
 /*# sourceMappingURL=home.css.map */

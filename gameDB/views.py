@@ -10,6 +10,13 @@ from django.contrib.auth.decorators import login_required
 
 
 # Test view
+def test(request):
+    user = Profile.objects.filter(game__score__gt=0).order_by('-game__score').values('game__score')[:2]
+    c = Profile.objects.filter(game__score__gt=99)
+    return HttpResponse(user)
+
+
+# Home view
 def home_page(request):
     return render(request, 'gameDB/home.html')
 
