@@ -1,0 +1,43 @@
+{% extends 'gameDB/base.html' %}
+{% load static %}
+{% block links %}
+    <link rel="stylesheet" href="{% static 'gameDB/styles/how_to_play/how_to.css' %}">
+{% endblock %}
+{% block title %}Home Page{% endblock %}
+
+
+{% block main %}
+    <div id="how_to_cont">
+        <div id="how_to_div">
+            <div id="h1">
+                <h1 style="font-family: 'nasa'">HOW TO PLAY</h1>
+            </div>
+            <div>
+                <img src="{% static 'gameDB/images/how_to_1.png' %}">
+                <p>
+                    Some cells contain mines, if you click on a cell containing
+                    a mine, you lose, but if you manage to reveal the rest of the
+                    cells(without blowing up any mines) you win.
+                </p>
+            </div>
+
+            <div>
+                <p>
+                    Clicking a cell which doesn’t have a mine
+                    reveals the number of surrounding squares containing mines.
+                    Use this information and some guesswork to avoid them.
+                </p>
+                <img src="{% static 'gameDB/images/how_to_2.png' %}">
+            </div>
+
+            <div>
+                <img src="{% static 'gameDB/images/how_to_3.png' %}">
+                <p>
+                    To reveal a cell, point and click on it,
+                    if you think that in a square there is a bomb,
+                    mark it with a flag by right clicking the mouse.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -5,20 +5,19 @@ from django.conf import settings
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max
 
 # Create your views here.
-
-
-# Test view
-def test(request):
-    user = Profile.objects.filter(game__score__gt=0).order_by('-game__score').values('game__score')[:2]
-    c = Profile.objects.filter(game__score__gt=99)
-    return HttpResponse(user)
 
 
 # Home view
 def home_page(request):
     return render(request, 'gameDB/home.html')
+
+
+# How to play view
+def how_to(request):
+    return render(request, 'gameDB/how_to_play.html')
 
 
 # Main game view
@@ -48,6 +47,20 @@ def store_data(request):
         )
         newDifficulty.save()
     return redirect('game')
+
+
+# Profile view
+@login_required()
+def profile(request):
+    data = Profile.objects.filter(user__username=request.user.username).order_by('-game__score').\
+        values('user__username','game__difficulty__label', 'game__score', 'game__won', 'game__date', 'game__duration')
+    return render(request=request, template_name='gameDB/profile.html', context={'data': data})
+
+
+# Highscore view
+def highscore(request):
+    data = Profile.objects.filter(game__score__gt=0).order_by('-game__score').values('game__score', 'user__username').aggregate(Max('game__score'))
+    return render(request=request, template_name='gameDB/highscore.html', context={'data': data})
 
 
 # Base template view

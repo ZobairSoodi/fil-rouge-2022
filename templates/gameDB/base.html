@@ -21,10 +21,10 @@
                 <a class="active_link" href="{% url 'home' %}"><i class="fa-solid fa-house-chimney"></i>HOME</a>
             </div>
             <div>
-                <a href="#"><i class="fa-solid fa-circle-question"></i>HOW TO PLAY</a>
+                <a href="{% url 'how-to' %}"><i class="fa-solid fa-circle-question"></i>HOW TO PLAY</a>
             </div>
             <div>
-                <a href="#"><i class="fa-solid fa-ranking-star"></i>HIGH SCORE</a>
+                <a href="{% url 'highscore' %}"><i class="fa-solid fa-ranking-star"></i>HIGH SCORE</a>
             </div>
             <div>
                 <a href="{% url 'game' %}"><i class="fa-solid fa-play"></i>PLAY NOW</a>
@@ -34,7 +34,7 @@
         <div id="bottom_nav">
             {% if user.is_authenticated %}
                 <div>
-                    <a href="#"><i class="fa-solid fa-user"></i>PROFILE</a>
+                    <a href="{% url 'profile' %}"><i class="fa-solid fa-user"></i>PROFILE</a>
                 </div>
                 <div>
                     <a href="{% url 'log-out' %}"><i class="fa-solid fa-right-from-bracket"></i>LOG OUT</a>

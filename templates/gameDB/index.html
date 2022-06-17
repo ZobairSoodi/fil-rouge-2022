@@ -16,6 +16,8 @@
 
 {% block main %}
     <script>
+
+        // initiate global variables
         var list = [];
         var cellsCount;
         var lost = false;
@@ -32,6 +34,8 @@
         var submit_score;
         var difficulty;
 
+
+        // Create the main game scene where all the action begins
         var mainGameScene = new Phaser.Class({
             Extends: Phaser.Scene,
             initialize:
@@ -44,12 +48,15 @@
                 score = 0;
                 lost = false;
                 reveal_count = 0;
-                timer = 0
+                timer = 0;
 
+                // load all bricks types
                 this.load.image('brick', '{% static 'gameDB/public/assets/brick.svg' %}');
                 for (var i = 0; i < 9; i++) {
                     this.load.image('brick' + i, '{% static 'gameDB/public/assets/brick'%}' + i + '.svg');
                 }
+
+                // load buttons
                 this.load.image('flag', '{% static 'gameDB/public/assets/flag.svg' %}');
                 this.load.image('head', '{% static 'gameDB/public/assets/head.png' %}');
                 this.load.image('reset', '{% static 'gameDB/public/assets/reset_btn.png' %}');
@@ -114,7 +121,7 @@
 
 
 
-                // Generate bombs within bricks
+
 
 
                 // Disable the default behavior of right-click
@@ -163,6 +170,8 @@
                     });
                 });
 
+                // Add the submit button and use fetch api to transfer
+                // the data to the store_data view
                 submit_score = this.add.image(300, 900, 'submit_btn');
                 submit_score.setInteractive();
                 submit_score.on('pointerdown', function () {
@@ -195,7 +204,7 @@
                     canvas.style.height = '100%'
                 })();{% endcomment %}
 
-                // Lose
+                // Handle the losing scenario
                 if (lost) {
                     reveal_bombs();
                     lost = false;
@@ -207,7 +216,7 @@
                     submit_score.y -= 300;
                 }
 
-                // Win
+                // Handle the winning scenario
                 else if (reveal_count == (rows * cols) - total_bombs) {
                     console.log("won");
                     var back_to_main = this.add.image(300, 350, 'back_to_main');
@@ -246,6 +255,7 @@
                     Phaser.Scene.call(this, { 'key': 'mainMenuScene' });
                 },
             preload: function () {
+                // Load the necessary images for the main menu
                 //this.load.image('start_game', '{% static 'gameDB/public/assets/start_game.png' %}');
                 this.load.image('bg', '{% static 'gameDB/public/assets/bg.jpg' %}');
                 this.load.image('bomb', '{% static 'gameDB/public/assets/bomb.svg' %}');
@@ -255,6 +265,7 @@
                 this.load.image('diff_hard', '{% static 'gameDB/public/assets/diff_hard.png' %}');
             },
             create: function () {
+
                 this.add.image(300, 350, 'bg');
                 //var start_button = this.add.image(300, 350, 'start_game');
 
@@ -286,6 +297,11 @@
 
         var game = new Phaser.Game(config);
 
+
+        // choose difficulty function
+        // it accepts 3 parameters,the first one is t he button itself,
+        // the second one is the difficulty label,
+        // and the last one is replaced with this
         function choose_diff(btn, diff, s){
             btn.setInteractive();
             btn.on('pointerdown', function () {
@@ -295,6 +311,9 @@
         }
 
 
+        // generate bricks on the platform based on a number of variables.
+        // the more rows/columns the function gets, the less scale it needs
+        // in order to create a balanced group of bricks
         function generate_bricks(brick, n, rows, cols,scale,from_top) {
             cellsCount = rows * cols;
             for (var i = 1; i <= rows; i++) {
@@ -313,6 +332,12 @@
             }
         }
 
+
+        // this function generates the bombs,
+        // it loops over all the bricks multiple times
+        // and every brick it goes through has a chance to generate a bomb,
+        // all of that just so the spread of the bombs would be totally random
+        // and unpredictable every time a new game has started
         function generate_bombs(maxBombs, tries) {
             var bombCount = 0;
             var max_loops = 0;
@@ -333,6 +358,9 @@
             total_bombs = bombCount;
         }
 
+
+        // go through the surrounding bricks of every bricks
+        // to calculate the number of bombs around said brick
         function set_bomb_count(block) {
             var r = block.row;
             var c = block.col;
@@ -348,6 +376,9 @@
             block.bombCount = bombs;
         }
 
+
+        // Upon clicking on a brick, this function changes the texture
+        // of said brick depending on the number of bombs surrounding it
         function detect_bombs(block) {
             var r = block.row;
             var c = block.col;
@@ -370,6 +401,9 @@
             }
         }
 
+
+        // this function calculates the position of the surrounding bricks
+        // depending on the position of the given brick's coordinates
         function surrounding_blocks(r, c) {
             return [
                 [r - 1, c - 1],
@@ -383,6 +417,8 @@
             ];
         }
 
+
+        // reveal all the bricks that have bombs in them
         function reveal_bombs() {
             list.forEach(el => {
                 if (el.hasBomb) {
@@ -393,6 +429,8 @@
             });
         }
 
+
+        // thiupdate the timer I guess ...
         function updateTimer() {
             timer++;
             if (timer < 10) {

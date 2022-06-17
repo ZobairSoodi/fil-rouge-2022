@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;1,100;1,300&display=swap");
+#how_to_cont {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+#how_to_div {
+  width: 70%;
+  padding: 70px 60px;
+  background-color: #42505F;
+}
+#how_to_div div:not(#h1) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 70px;
+}
+#how_to_div div:not(#h1) img {
+  width: 100px;
+}
+#how_to_div div:not(#h1) p {
+  font-size: 19px;
+  margin: 0 20px;
+  font-family: "Work Sans", sans-serif;
+}
+#how_to_div #h1 {
+  display: flex;
+  justify-content: center;
+}
+#how_to_div #h1 h1 {
+  margin: 0;
+}
+
+/*# sourceMappingURL=how_to.css.map */

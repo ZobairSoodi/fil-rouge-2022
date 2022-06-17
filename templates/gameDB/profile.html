@@ -1,0 +1,59 @@
+{% extends 'gameDB/base.html' %}
+
+{% load static %}
+{% block links %}
+    <link rel="stylesheet" href="{% static 'gameDB/styles/profile/profile.css' %}">
+    <style>
+        @font-face {
+          font-family: "video";
+          src: url('{% static 'gameDB/fonts/videophreak/VIDEOPHREAK.ttf' %}');
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Profile{% endblock %}
+
+{% block main %}
+    <div id="score_cont" style="flex-direction: column !important;">
+
+        <div id="score_head">
+            <div id="score_games">
+                <div>Games:</div>
+                <div>Won:</div>
+                <div>Lost:</div>
+            </div>
+            <div id="score_total">
+                <span>Total Score:</span>
+            </div>
+        </div>
+
+        <h1 style="font-family: 'nasa';">Scoreboard</h1>
+
+        <table>
+            <thead>
+                <td>Date</td>
+                <td>Score</td>
+                <td>Difficulty</td>
+                <td>Duration</td>
+                <td>State</td>
+            </thead>
+            <tbody style="font-family: 'nasa';">
+                {% for i in data %}
+                    <tr>
+                        <td>{{ i.game__date|date:"d-m-y" }}</td>
+                        <td>{{ i.game__score }}</td>
+                        <td>{{ i.game__difficulty__label }}</td>
+                        <td>{{ i.game__duration }} s</td>
+                        <td>
+                            {% if i.game__won == True %}
+                                won
+                            {% else %}
+                                lost
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

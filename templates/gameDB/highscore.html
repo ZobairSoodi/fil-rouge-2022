@@ -1,0 +1,16 @@
+{% extends 'gameDB/base.html' %}
+
+{% block links %}{% endblock %}
+
+{% block title %}{% endblock %}
+
+{% block main %}
+    <div  style="flex-direction: column !important;">
+        {% for i in data %}
+            <div>
+                {{ i.user__username }}
+                {{ i.game__score }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
