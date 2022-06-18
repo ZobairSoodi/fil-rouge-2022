@@ -5,7 +5,7 @@ from django.conf import settings
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Max
+from django.db.models import Max, Count
 
 # Create your views here.
 
@@ -30,12 +30,17 @@ def game_page(request):
 def store_data(request):
     if request.method == 'POST':
         score = request.POST.get('score')
-        profile = request.POST.get('profile')
+        profile_ = request.POST.get('profile')
         duration = request.POST.get('duration')
-        won = request.POST.get('won')
+        won_ = request.POST.get('won')
+        if won_ == "True":
+            won = True
+        else:
+            won = False
+
         difficulty = request.POST.get('difficulty')
         newGame = Game(
-                       profile_id=Profile.objects.get(user_id=profile),
+                       profile_id=Profile.objects.get(user_id=profile_),
                        score=score,
                        duration=duration,
                        won=won
@@ -52,12 +57,37 @@ def store_data(request):
 # Profile view
 @login_required()
 def profile(request):
-    data = Profile.objects.filter(user__username=request.user.username).order_by('-game__score').\
-        values('user__username','game__difficulty__label', 'game__score', 'game__won', 'game__date', 'game__duration')
-    return render(request=request, template_name='gameDB/profile.html', context={'data': data})
+    data = Profile.objects.filter(user__username=request.user.username).\
+        order_by('-game__score').\
+        values('user__username', 'game__difficulty__label',
+               'game__score', 'game__won', 'game__date',
+               'game__duration')
+
+    profile_info = Profile.objects.filter(user__username=request.user.username).\
+        aggregate(max_score=Max('game__score'))
+
+    # games = Profile.objects.filter(user__username=request.user.username).\
+    #     annotate(game_count=Count("game__score"),
+    #              game_won=Count("game__won"))
+
+    games_num = Game.objects.filter(profile_id__user__username=request.user.username).count()
+
+    games_won = Game.objects.filter(profile_id__user__username=request.user.username, won=True).count()
+
+    games_lost = Game.objects.filter(profile_id__user__username=request.user.username, won=False).count()
+
+    return render(request=request,
+                  template_name='gameDB/profile.html',
+                  context={
+                            'data': data,
+                            'info': profile_info,
+                            'games_num': games_num,
+                            'games_won': games_won,
+                            'games_lost': games_lost,
+                          })
 
 
-# Highscore view
+# High score view
 def highscore(request):
     data = Profile.objects.filter(game__score__gt=0).order_by('-game__score').values('game__score', 'user__username').aggregate(Max('game__score'))
     return render(request=request, template_name='gameDB/highscore.html', context={'data': data})

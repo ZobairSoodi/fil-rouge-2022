@@ -18,12 +18,12 @@
 
         <div id="score_head">
             <div id="score_games">
-                <div>Games:</div>
-                <div>Won:</div>
-                <div>Lost:</div>
+                <div>Games:{{ games_num }}</div>
+                <div>Won: {{ games_won }}</div>
+                <div>Lost: {{ games_lost }}</div>
             </div>
             <div id="score_total">
-                <span>Total Score:</span>
+                <span>Total Score: {{ info.max_score }}</span>
             </div>
         </div>
 

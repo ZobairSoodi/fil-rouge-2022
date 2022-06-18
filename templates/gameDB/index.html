@@ -120,10 +120,6 @@
                 }
 
 
-
-
-
-
                 // Disable the default behavior of right-click
                 this.input.mouse.disableContextMenu();
 
@@ -175,10 +171,11 @@
                 submit_score = this.add.image(300, 900, 'submit_btn');
                 submit_score.setInteractive();
                 submit_score.on('pointerdown', function () {
+                    this.scene.start('mainMenuScene');
                     const data = new FormData();
                     data.append('score', score);
                     data.append('duration', timer);
-                    data.append('won', + lost?"False":"True");
+                    data.append('won', + lost?"True":"False");
                     data.append('difficulty', difficulty);
                     data.append('profile', '{{ request.user.id}}');
                     data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
@@ -236,6 +233,9 @@
                         var temp_list = surrounding_blocks(el.row, el.col);
                         temp_list.forEach((b)=>{
                             if (temp_obj = Phaser.Actions.GetFirst(list, { row: b[0], col: b[1]})){
+                                if(!temp_obj.isRevealed){
+                                    reveal_count++;
+                                }
                                 temp_obj.isRevealed = true;
                                 temp_obj.setTexture('brick' + temp_obj.bombCount);
                             }
@@ -430,7 +430,7 @@
         }
 
 
-        // thiupdate the timer I guess ...
+        // update the timer I guess ...
         function updateTimer() {
             timer++;
             if (timer < 10) {
