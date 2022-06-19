@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static 'gameDB/styles/base.css' %}">
+    <link rel="stylesheet" href="{% static 'gameDB/styles/base/base.css' %}">
     <script src="https://kit.fontawesome.com/ab021e0629.js" crossorigin="anonymous"></script>
     {% block links %}{% endblock links %}
     <title>{% block title %}{% endblock title %}</title>
@@ -15,40 +15,42 @@
     </style>
 </head>
 <body>
+    {% with request.resolver_match.url_name as url_name %}
     <nav style="font-family: nasa;">
         <div id="top_nav">
             <div>
-                <a class="active_link" href="{% url 'home' %}"><i class="fa-solid fa-house-chimney"></i>HOME</a>
+                <a class="{% if url_name == 'home' %}active_link{% endif %}" href="{% url 'home' %}"><i class="fa-solid fa-house-chimney"></i>HOME</a>
             </div>
             <div>
-                <a href="{% url 'how-to' %}"><i class="fa-solid fa-circle-question"></i>HOW TO PLAY</a>
+                <a class="{% if url_name == 'how-to' %}active_link{% endif %}" href="{% url 'how-to' %}"><i class="fa-solid fa-circle-question"></i>HOW TO PLAY</a>
             </div>
             <div>
-                <a href="{% url 'highscore' %}"><i class="fa-solid fa-ranking-star"></i>HIGH SCORE</a>
+                <a class="{% if url_name == 'highscore' %}active_link{% endif %}" href="{% url 'highscore' %}"><i class="fa-solid fa-ranking-star"></i>HIGH SCORE</a>
             </div>
             <div>
-                <a href="{% url 'game' %}"><i class="fa-solid fa-play"></i>PLAY NOW</a>
+                <a class="{% if url_name == 'game' %}active_link{% endif %}" href="{% url 'game' %}"><i class="fa-solid fa-play"></i>PLAY NOW</a>
             </div>
         </div>
 
         <div id="bottom_nav">
             {% if user.is_authenticated %}
                 <div>
-                    <a href="{% url 'profile' %}"><i class="fa-solid fa-user"></i>PROFILE</a>
+                    <a class="{% if url_name == 'profile' %}active_link{% endif %}" href="{% url 'profile' %}"><i class="fa-solid fa-user"></i>PROFILE</a>
                 </div>
                 <div>
                     <a href="{% url 'log-out' %}"><i class="fa-solid fa-right-from-bracket"></i>LOG OUT</a>
                 </div>
             {% else %}
                 <div>
-                    <a href="{% url 'sign-in' %}"><i class="fa-solid fa-right-to-bracket"></i>LOG IN</a>
+                    <a class="{% if url_name == 'sign-in' %}active_link{% endif %}" href="{% url 'sign-in' %}"><i class="fa-solid fa-right-to-bracket"></i>LOG IN</a>
                 </div>
                 <div>
-                    <a href="{% url 'sign-up' %}"><i class="fa-solid fa-user-plus"></i>SIGN UP</a>
+                    <a class="{% if url_name == 'sign-up' %}active_link{% endif %}" href="{% url 'sign-up' %}"><i class="fa-solid fa-user-plus"></i>SIGN UP</a>
                 </div>
             {% endif %}
         </div>
     </nav>
+    {% endwith %}
     <div id="main" style="background-image: url({% static 'gameDB/images/bg3.svg' %}) !important;background-size: contain !important;">
         {% block main %}{% endblock main %}
     </div>

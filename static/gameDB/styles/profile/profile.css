@@ -21,7 +21,12 @@
 }
 #score_cont h1 {
   margin-top: 50px;
+  margin-bottom: 0;
   font-size: 35px;
+}
+#score_cont h3 {
+  margin: 0;
+  margin-bottom: 30px;
 }
 #score_cont table {
   width: 100%;

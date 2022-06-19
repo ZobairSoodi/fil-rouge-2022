@@ -18,7 +18,7 @@
 
         <div id="score_head">
             <div id="score_games">
-                <div>Games:{{ games_num }}</div>
+                <div>Games: {{ games_num }}</div>
                 <div>Won: {{ games_won }}</div>
                 <div>Lost: {{ games_lost }}</div>
             </div>
@@ -28,6 +28,7 @@
         </div>
 
         <h1 style="font-family: 'nasa';">Scoreboard</h1>
+        <h3 style="font-family: 'nasa';">({{ user.username }})</h3>
 
         <table>
             <thead>

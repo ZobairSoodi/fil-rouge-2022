@@ -260,9 +260,9 @@
                 this.load.image('bg', '{% static 'gameDB/public/assets/bg.jpg' %}');
                 this.load.image('bomb', '{% static 'gameDB/public/assets/bomb.svg' %}');
                 this.load.image('try_again', '{% static 'gameDB/public/assets/try_again.png' %}');
-                this.load.image('diff_easy', '{% static 'gameDB/public/assets/diff_easy.png' %}');
-                this.load.image('diff_normal', '{% static 'gameDB/public/assets/diff_normal.png' %}');
-                this.load.image('diff_hard', '{% static 'gameDB/public/assets/diff_hard.png' %}');
+                this.load.image('diff_easy', '{% static 'gameDB/public/assets/easy_diff_new.svg' %}');
+                this.load.image('diff_normal', '{% static 'gameDB/public/assets/normal_diff_new.svg' %}');
+                this.load.image('diff_hard', '{% static 'gameDB/public/assets/hard_diff_new.svg' %}');
             },
             create: function () {
 
@@ -270,12 +270,15 @@
                 //var start_button = this.add.image(300, 350, 'start_game');
 
                 var diff_easy = this.add.image(300, 200, 'diff_easy');
+                diff_easy.setScale(0.7);
                 choose_diff(diff_easy, 'easy', this);
 
                 var diff_normal = this.add.image(300, 350, 'diff_normal');
+                diff_normal.setScale(0.7);
                 choose_diff(diff_normal, 'normal', this);
 
                 var diff_hard = this.add.image(300, 500, 'diff_hard');
+                diff_hard.setScale(0.7);
                 choose_diff(diff_hard, 'hard', this);
 
             },
